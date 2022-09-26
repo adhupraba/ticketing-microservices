@@ -20,6 +20,8 @@ global.signin = async () => {
 };
 
 beforeAll(async () => {
+  process.env.JWT_SECRET = "1234";
+
   mongo = await MongoMemoryServer.create();
   const mongoUri = mongo.getUri();
   await mongoose.connect(mongoUri);
