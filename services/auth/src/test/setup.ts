@@ -2,6 +2,7 @@ import request from "supertest";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { app } from "../app";
+import { config } from "../constants";
 
 let mongo: MongoMemoryServer | undefined;
 
@@ -21,6 +22,7 @@ global.signin = async () => {
 
 beforeAll(async () => {
   process.env.JWT_SECRET = "1234";
+  config.jwtSecret = "1234";
 
   mongo = await MongoMemoryServer.create();
   const mongoUri = mongo.getUri();
