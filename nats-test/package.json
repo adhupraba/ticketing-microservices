@@ -1,0 +1,25 @@
+{
+  "name": "nats-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "publish:dev": "ts-node-dev --rs src/publisher.ts",
+    "listen:dev": "ts-node-dev --rs src/listener.ts",
+    "build": "rimraf build && tsc",
+    "publish:start": "node build/publisher.js",
+    "listen:start": "node build/listener.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-nats-streaming": "^0.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.15",
+    "rimraf": "^3.0.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.8.2"
+  }
+}

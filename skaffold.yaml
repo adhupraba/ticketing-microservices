@@ -1,0 +1,60 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+metadata:
+  name: ticketing-skaffold
+deploy:
+  kubectl:
+    manifests:
+      - k8s/*
+build:
+  local:
+    push: false
+  artifacts:
+    - image: adhupraba/ticketing-client
+      context: client
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "**/*.ts"
+            dest: .
+    - image: adhupraba/ticketing-auth
+      context: services/auth
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: adhupraba/ticketing-tickets
+      context: services/tickets
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: adhupraba/ticketing-orders
+      context: services/orders
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: adhupraba/ticketing-expiration
+      context: services/expiration
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: adhupraba/ticketing-payments
+      context: services/payments
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .

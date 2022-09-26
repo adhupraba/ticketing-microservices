@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-config
+data:
+  MONGO_URL: "mongodb://ticketing-orders-mongo-svc:27017/ticketing-orders"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticketing-orders-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticketing-orders
+  template:
+    metadata:
+      labels:
+        app: ticketing-orders
+    spec:
+      containers:
+        - name: ticketing-orders
+          image: adhupraba/ticketing-orders
+          env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_SECRET
+            # take the pod name as the client id
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          envFrom:
+            - configMapRef:
+                name: ticketing-common-config
+            - configMapRef:
+                name: orders-config
+          ports:
+            - containerPort: 6003
+              protocol: TCP
+          resources:
+            limits:
+              memory: "200Mi"
+              cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ticketing-orders-svc
+spec:
+  selector:
+    app: ticketing-orders
+  ports:
+    - port: 6003
+      targetPort: 6003
+      protocol: TCP

@@ -1,0 +1,48 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ticketing-ingress-svc
+  annotations:
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+    - host: ticketing.com
+      http:
+        paths:
+          - pathType: Prefix
+            path: /api/users/?(.*)
+            backend:
+              service:
+                name: ticketing-auth-svc
+                port:
+                  number: 6001
+          - pathType: Prefix
+            path: /api/tickets/?(.*)
+            backend:
+              service:
+                name: ticketing-tickets-svc
+                port:
+                  number: 6002
+          - pathType: Prefix
+            path: /api/orders/?(.*)
+            backend:
+              service:
+                name: ticketing-orders-svc
+                port:
+                  number: 6003
+          - pathType: Prefix
+            path: /api/payments/?(.*)
+            backend:
+              service:
+                name: ticketing-payments-svc
+                port:
+                  number: 6004
+          - pathType: Prefix
+            path: /?(.*)
+            backend:
+              service:
+                name: ticketing-client-svc
+                port:
+                  number: 3000

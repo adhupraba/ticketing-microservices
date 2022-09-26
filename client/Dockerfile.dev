@@ -1,0 +1,17 @@
+FROM alpine
+
+RUN apk update && apk upgrade && apk add --no-cache --update nodejs yarn
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+
+RUN yarn install
+
+COPY ./ ./
+
+EXPOSE 3000
+
+ENV PORT 3000
+
+CMD [ "yarn", "dev" ]

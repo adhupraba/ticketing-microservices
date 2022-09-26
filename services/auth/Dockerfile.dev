@@ -1,0 +1,17 @@
+FROM alpine
+
+RUN apk update && apk upgrade && apk add --no-cache --update nodejs npm
+
+WORKDIR /app
+
+COPY package.json yarn.lock* package-lock.json* ./
+
+RUN \
+  if [ -f yarn.lock ]; then yarn install; \
+  elif [ -f package-lock.json ]; then npm install; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
+COPY ./ ./
+
+CMD [ "npm", "run", "dev" ]

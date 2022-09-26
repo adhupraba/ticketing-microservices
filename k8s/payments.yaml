@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-config
+data:
+  MONGO_URL: "mongodb://ticketing-payments-mongo-svc:27017/ticketing-payments"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticketing-payments-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticketing-payments
+  template:
+    metadata:
+      labels:
+        app: ticketing-payments
+    spec:
+      containers:
+        - name: ticketing-payments
+          image: adhupraba/ticketing-payments
+          env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_SECRET
+            - name: STRIPE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: STRIPE_SECRET
+            - name: STRIPE_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-webhook-secret
+                  key: STRIPE_WEBHOOK_SECRET
+            # take the pod name as the client id
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          envFrom:
+            - configMapRef:
+                name: ticketing-common-config
+            - configMapRef:
+                name: payments-config
+          ports:
+            - containerPort: 6004
+              protocol: TCP
+          resources:
+            limits:
+              memory: "200Mi"
+              cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ticketing-payments-svc
+spec:
+  selector:
+    app: ticketing-payments
+  ports:
+    - port: 6004
+      targetPort: 6004
+      protocol: TCP

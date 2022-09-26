@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: expiration-config
+data:
+  REDIS_HOST: "ticketing-expiration-redis-svc"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticketing-expiration-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticketing-expiration
+  template:
+    metadata:
+      labels:
+        app: ticketing-expiration
+    spec:
+      containers:
+        - name: ticketing-expiration
+          image: adhupraba/ticketing-expiration
+          env:
+            # take the pod name as the client id
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          envFrom:
+            - configMapRef:
+                name: ticketing-common-config
+            - configMapRef:
+                name: expiration-config
+          resources:
+            limits:
+              memory: "200Mi"
+              cpu: "500m"

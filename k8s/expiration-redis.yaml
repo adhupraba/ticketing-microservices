@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticketing-expiration-redis-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticketing-expiration-redis
+  template:
+    metadata:
+      labels:
+        app: ticketing-expiration-redis
+    spec:
+      containers:
+        - name: ticketing-expiration-redis
+          image: redis
+          resources:
+            limits:
+              memory: "200Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ticketing-expiration-redis-svc
+spec:
+  selector:
+    app: ticketing-expiration-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP

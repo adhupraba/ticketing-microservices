@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: next-web-config
+data:
+  NEXT_PUBLIC_NODE_ENV: "production"
+  NEXT_PUBLIC_BASE_URL: "https://trensetickets.com"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: next-server-config
+data:
+  NODE_ENV: "production"
+  INGRESS_URL: "http://ingress-nginx-controller.ingress-nginx.svc.cluster.local"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticketing-client-depl
+spec:
+  selector:
+    matchLabels:
+      app: ticketing-client
+  template:
+    metadata:
+      labels:
+        app: ticketing-client
+    spec:
+      containers:
+        - name: ticketing-client
+          image: adhupraba/ticketing-client
+          env:
+            - name: NEXT_PUBLIC_STRIPE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: next-public-stripe-key
+                  key: NEXT_PUBLIC_STRIPE_KEY
+          envFrom:
+            - configMapRef:
+                name: next-web-config
+            - configMapRef:
+                name: next-server-config
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          resources:
+            limits:
+              memory: "500Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ticketing-client-svc
+spec:
+  selector:
+    app: ticketing-client
+  ports:
+    - port: 3000
+      targetPort: 3000
