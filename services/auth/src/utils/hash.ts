@@ -10,7 +10,6 @@ export class Hash {
   static compare(hashedData: string, unHashedData: string) {
     const [hashedStr, salt] = hashedData.split(".");
     const newHash = scryptSync(unHashedData, salt, 64);
-
     return newHash.toString("hex") === hashedStr;
   }
 }
