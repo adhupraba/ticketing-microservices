@@ -3,19 +3,34 @@ import { Message } from "node-nats-streaming";
 import { Order } from "../../../models/order";
 import { natsWrapper } from "../../../natsWrapper";
 import { OrderCancelledSubscriber } from "..";
+import { Payment } from "../../../models/payment";
+import { stripe } from "../../../stripe";
 
 const setup = async () => {
   const subscriber = new OrderCancelledSubscriber(natsWrapper.client);
   const orderId = global.getMongoId();
+  const price = 20;
+
+  const intent = await stripe.paymentIntents.create({
+    amount: price * 100,
+    currency: "INR",
+  });
 
   const order = Order.build({
     id: orderId,
-    price: 20,
-    status: OrderStatus.Created,
+    price,
+    status: OrderStatus.Cancelled,
     userId: global.getMongoId(),
     version: 0,
   });
   await order.save();
+
+  const payment = Payment.build({
+    orderId: orderId,
+    stripeId: intent.id,
+  });
+
+  await payment.save();
 
   const data: OrderCancelledEvent["data"] = {
     id: orderId,

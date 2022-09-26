@@ -56,7 +56,7 @@ it("returns a 204 with valid inputs", async () => {
   const paymentIntent = paymentIntents.data.find((intent) => intent.amount === price * 100);
 
   expect(paymentIntent).toBeDefined();
-  expect(paymentIntent?.currency).toEqual("INR");
+  expect(paymentIntent?.currency).toEqual("inr");
 
   const payment = await Payment.findOne({ orderId: order.id, stripeId: paymentIntent?.id });
 
