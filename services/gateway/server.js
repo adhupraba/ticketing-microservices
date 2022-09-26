@@ -43,7 +43,7 @@ const callService = async (req, res) => {
       withCredentials: true,
     };
 
-    console.log("opts =====>", opts);
+    // console.log("opts =====>", opts);
 
     if (method === "get") {
       ({ data, status, headers } = await axios[method](url, opts));
