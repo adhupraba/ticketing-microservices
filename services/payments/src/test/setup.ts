@@ -48,6 +48,9 @@ global.createPayment = (orderId, cookie) => {
 };
 
 beforeAll(async () => {
+  process.env.JWT_SECRET = "1234";
+  config.jwtSecret = "1234";
+
   mongo = await MongoMemoryServer.create();
   const mongoUri = mongo.getUri();
   await mongoose.connect(mongoUri);
