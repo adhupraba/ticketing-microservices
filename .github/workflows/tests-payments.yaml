@@ -7,4 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: cd services/payments && npm install && npm run test:ci
+      - run: |
+          cd services/payments
+          touch .env
+          echo STRIPE_SECRET=${{ STRIPE_SECRET }} >> .env
+          echo STRIPE_WEBHOOK_SECRET=${{ STRIPE_WEBHOOK_SECRET }} >> .env
+          npm install
+          npm run test:ci
