@@ -7,7 +7,8 @@
     "dev": "ts-node-dev --respawn --transpile-only --exit-child --watch src src/server.ts",
     "build": "rimraf build && tsc",
     "start": "node build/server.js",
-    "test": "jest --watchAll --no-cache ./src"
+    "test": "jest --watchAll --no-cache ./src",
+    "test:ci": "jest"
   },
   "jest": {
     "preset": "ts-jest",
