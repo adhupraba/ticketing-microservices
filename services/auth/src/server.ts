@@ -3,6 +3,7 @@ import { app } from "./app";
 import { checkEnv, config } from "./constants";
 
 const start = async () => {
+  console.log("checking env variables");
   checkEnv();
 
   try {
