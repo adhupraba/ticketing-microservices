@@ -6,6 +6,7 @@ import { OrderCreatedSubscriber } from "./events/subscribers/orderCreatedSubscri
 import { natsWrapper } from "./natsWrapper";
 
 const start = async () => {
+  console.log("checking env variables");
   checkEnv();
 
   try {
