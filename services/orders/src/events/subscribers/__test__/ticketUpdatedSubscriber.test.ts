@@ -45,7 +45,7 @@ it("finds, updates and saves a ticket", async () => {
 
   expect(updTicket).toBeDefined();
   expect(updTicket!.title).toEqual(data.title);
-  expect(updTicket!.version).toEqual(ticket.version);
+  expect(updTicket!.version).toEqual(data.version);
 });
 
 it("acks the message", async () => {
